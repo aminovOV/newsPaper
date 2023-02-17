@@ -1,0 +1,53 @@
+Настройка проекта
+
+python -m pip install --upgrade pip
+python -m pip install Django
+django-admin startproject newspaper
+cd newspaper
+python manage.py migrate
+python manage.py startapp news
+# INSTALLED_APPS = [...'news',]
+python manage.py makemigrations
+python manage.py migrate
+
+Команды
+
+python manage.py shell
+from django.contrib.auth.models import User
+oleg = User.objects.create(username='oleg')
+timofey = User.objects.create(username='timofey')
+from news.models import *
+author_1 = Author.objects.create(user=oleg)
+author_2 = Author.objects.create(user=timofey)
+politics = Category.objects.create(name='Политика')
+economy = Category.objects.create(name='Экономика')
+it = Category.objects.create(name='IT')
+science = Category.objects.create(name='Наука')
+article_1 = Post.objects.create(post_type='A', headline='Корпоративный мессенджер Slack отключит бесплатных пользователей из России', body_text='Корпоративный мессенджер Slack начал уведомлять пользователей, зарегистрированных на адреса email в зоне .ru о предстоящем прекращении обслуживания и удалении бесплатных пространств с 21 марта', author=author_1)
+article_1.category.add(it)
+article_2 = Post.objects.create(post_type='A', headline='Зоологи обнаружили, что щенки спонтанно повторяют действия людей', body_text='Собачий вой слышали, наверно, все, и многие при этом наверняка замечали, что не все собаки воют одинаково: кто-то вообще не воет, кто-то изредка подвывает, а кто-то воет постоянно. Некоторые псы вообще отвечают воем на самые разные звуки от автомобильных сигналов до музыки из колонок. Считается, что дело в породе: вроде бы некоторые породы больше склонны к вою, и что это связано с особой генетической близостью к волкам.', author=author_2)
+article_2.category.add(science)
+news_1 = Post.objects.create(post_type='N', headline='В декабре Россия сократила объем вложений в госбумаги США в 3,3 раза', body_text='По итогам декабря 2022 года объем вложений в государственные ценные бумаги США упал в 3,3 раза по сравнению с ноябрем. Показатель составил $629 млн, следует из данных Минфина США. На краткосрочные облигации пришлось $525 млн против $2,012 млрд в ноябре, на долгосрочные — $104 млн против $80 млн в ноябре. Крупнейшими держателями госбумаг США стали Япония ($1,07 трлн), Китай ($867,1 млрд) и Великобритания ($654,5 млрд). Напомним, в ноябре объем российских вложений в госбумаги США составил $2,092 млрд, в октябре — $2,015 млрд. С марта 2022 года средний объем вложений составлял около $2 млрд. Россия начала сокращать объемы вложений в облигации США с 2018 года после очередного раунда санкций, тогда их объем доходил до $96 млрд.', author=author_1)
+news_1.category.add(economy, politics)          
+comment_1 = Comment.objects.create(text='Щеночки - милота', post=article_2, user=oleg)
+comment_2 = Comment.objects.create(text="Как же теперь без Slack'а будем?", post=article_1, user=oleg)
+comment_3 = Comment(text="Напишем свой Slack )", post=article_1, user=timofey)
+comment_4 = Comment.objects.create(text='— Дети, а что произойдёт, если пробивающее любой щит копьё ударит в непробиваемый щит? Класс молчит, потом Вовочка поднимает руку.— Да, Вовочка? — Водка подорожает, Марья Ивановна.— Почему??? — Этой мой отец всё время говорит — у нас вначале какая-то непонятная х**ня происходит, а потом водка дорожает.', post=news_1, user=oleg)
+article_1.dislike()
+article_1.dislike()
+article_1.dislike()
+article_2.like()
+article_2.like()
+news_1.dislike()
+news_1.dislike()
+news_1.dislike()
+article_1.save()
+article_2.save()
+news_1.save()
+comment_1.like()
+comment_3.like()
+comment_1.dislike()
+comment_1.save()
+comment_3.save()
+author_1.update_rating()
+author_2.update_rating()
