@@ -47,7 +47,13 @@ news_1.save()
 comment_1.like()
 comment_3.like()
 comment_1.dislike()
-comment_1.save()
-comment_3.save()
 author_1.update_rating()
 author_2.update_rating()
+for author in Author.objects.order_by('-rating'): 
+    author.user.username
+    author.rating
+post=Post.objects.annotate(_rating=Count('rating')).order_by('-rating')
+f'{post[0].pub_date} {post[0].author.user.username} {post[0].rating} {pos
+t[0].headline} {post[0].preview()}'
+comment_1 = Comment.objects.filter(post=post[0])[0]
+comment_1.date, comment_1.user.username, comment_1.rating, comment_1.text

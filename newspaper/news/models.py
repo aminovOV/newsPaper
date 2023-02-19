@@ -11,11 +11,11 @@ class Author(models.Model):
         post_rate = self.post_set.aggregate(post_rating=Sum('rating'))
         rate = 0
         rate += post_rate.get('post_rating')
-        # comment_rate = self.user.comment_set.aggregate(comment_rating=Sum('rating'))
-        # c_rate = 0
-        # c_rate += comment_rate.get('comm_rating')
-        self.rating = rate*3  # + c_rate. 'User' object has no attribute 'comments_set'
-        return self.rating
+        comment_rate = self.user.comment_set.aggregate(comment_rating=Sum('rating'))
+        c_rate = 0
+        c_rate += comment_rate.get('comment_rating')
+        self.rating = rate*3 + c_rate
+        self.save()
 
 
 class Category(models.Model):
@@ -63,7 +63,7 @@ class Comment(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     rating = models.IntegerField(default=0)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def like(self):
         self.rating += 1
