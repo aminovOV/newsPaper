@@ -15,5 +15,7 @@
             <p>{{ post.pub_date }}</p>
             <p>{{ post.body_text|censor|truncatechars:20|linebreaks }}</p>
         {% endfor %}
+    {% else %}
+        <h3>Новостей нет</h3>
     {% endif %}
-    {% endblock content %}
+{% endblock content %}
