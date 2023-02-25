@@ -1,0 +1,19 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+Новости
+{% endblock title %}
+
+{% block content %}
+    <h1>Главные новости</h1>
+    <hr>
+    {% if posts %}
+        {% for post in posts %}
+            <h3>{{ post.headline }}</h3>
+            <p>{{ post.pub_date }}</p>
+            <p>{{ post.body_text|censor|truncatechars:20|linebreaks }}</p>
+        {% endfor %}
+    {% endif %}
+    {% endblock content %}

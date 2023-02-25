@@ -1,0 +1,24 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+
+{% block title %}
+{{ post.headline|censor }}
+{% endblock title %}
+
+{% block content %}
+    <h3>{{ post.headline|censor|linebreaks }}</h3>
+    <p>{{ post.body_text|censor|linebreaks }}<p>
+    {% for category in post.category.all %}
+        <p>Тег: {{ category }}</p>
+    {% endfor %}
+    <p>Дата публикации: {{ post.pub_date|date:"d.m.Y" }} {{ post.pub_date|time:"H:i" }}<p>
+    <p>Автор: {{ post.author }}</p>
+    <p>Рейтинг: {{ post.rating }}</p>
+    <p>Комментарии:</p>
+    {% for comment in post.comments.all %}
+        <p>{{ comment.rating }} {{ comment.user }}</p>
+        <p>{{ comment.text|censor|linebreaks }}</p>
+    {% endfor %}
+{% endblock content %}

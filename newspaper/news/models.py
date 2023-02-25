@@ -7,6 +7,9 @@ class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.FloatField(default=0.0)
 
+    def __str__(self):
+        return self.user.username
+
     def update_rating(self):
         post_rate = self.post_set.aggregate(post_rating=Sum('rating'))
         rate = 0
@@ -39,7 +42,7 @@ class Post(models.Model):
     rating = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.headline
+        return f'{self.headline.title()}, {self.pub_date}'
 
     def like(self):
         self.rating += 1
@@ -62,7 +65,7 @@ class Comment(models.Model):
     text = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     rating = models.IntegerField(default=0)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def like(self):
