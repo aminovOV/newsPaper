@@ -2,6 +2,8 @@
 
 {% load custom_filters %}
 
+{% load custom_tags %}
+
 {% block title %}
 Новости
 {% endblock title %}
@@ -12,10 +14,29 @@
     {% if posts %}
         {% for post in posts %}
             <h3>{{ post.headline }}</h3>
-            <p>{{ post.pub_date }}</p>
+            <p>{{ post.pub_date|date:"d.m.Y" }} {{ post.pub_date|time:"H:i" }}</p>
             <p>{{ post.body_text|censor|truncatechars:20|linebreaks }}</p>
         {% endfor %}
     {% else %}
         <h3>Новостей нет</h3>
     {% endif %}
+
+ {% if page_obj.has_previous %}
+       <a href="?{% url_replace page=1 %}">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+       <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
 {% endblock content %}

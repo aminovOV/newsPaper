@@ -1,0 +1,26 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% load custom_tags %}
+
+{% block title %}
+Поиск
+{% endblock title %}
+
+{% block content %}
+    <h1> Найти публикацию </h1>
+    <hr>
+    <br>
+   <form action="" method="get">
+       {{ filterset.form.as_p }}
+       <input type="submit" value="Найти" />
+   </form>
+    <hr>
+    <br>
+    {% for post in filterset.qs %}
+        <h3>{{ post.headline }}</h3>
+        <p>{{ post.pub_date|date:"d.m.Y" }} {{ post.pub_date|time:"H:i" }}</p>
+        <p>{{ post.body_text|censor|truncatechars:20|linebreaks }}</p>
+    {% endfor %}
+{% endblock content %}

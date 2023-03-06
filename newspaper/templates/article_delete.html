@@ -1,0 +1,12 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<h1>Удалить статью</h1>
+<hr>
+<br>
+<form action="" method="post">
+  {% csrf_token %}
+  <p>Статья {{ post.headline }} будет удалена</p>
+  <input type="submit" value="Удалить" />
+</form>
+{% endblock content %}
