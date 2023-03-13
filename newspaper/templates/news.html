@@ -11,11 +11,23 @@
 {% block content %}
     <h1>Главные новости</h1>
     <hr>
+    {% if perms.news.add_post %}
+    <p><a href="{% url 'news-create' %}">Добавить новость</a> |
+        <a href="{% url 'article-create' %}">Добавить статью</a></p>
+    {% endif %}
     {% if posts %}
         {% for post in posts %}
-            <h3>{{ post.headline }}</h3>
+            <h6><a href="{% url 'news-detail' pk=post.id %}">{{ post.headline }}</a></h6>
             <p>{{ post.pub_date|date:"d.m.Y" }} {{ post.pub_date|time:"H:i" }}</p>
             <p>{{ post.body_text|censor|truncatechars:20|linebreaks }}</p>
+            {% if perms.news.change_post and perms.news.delete_post and post.post_type == 'N' %}
+            <p><a href="{% url 'news-edit' pk=post.id %}">Редактировать новость</a> |
+                <a href="{% url 'news-delete' pk=post.id %}">Удалить новость</a></p>
+            {% endif %}
+            {% if perms.news.change_post and perms.news.delete_post and post.post_type == 'A' %}
+            <p><a href="{% url 'article-edit' pk=post.id %}">Редактировать статью</a> |
+                <a href="{% url 'article-delete' pk=post.id %}">Удалить статью</a></p>
+            {% endif %}
         {% endfor %}
     {% else %}
         <h3>Новостей нет</h3>
