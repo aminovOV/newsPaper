@@ -8,14 +8,21 @@
 {% endblock title %}
 
 {% block content %}
-    <h3>{{ post.headline|censor|linebreaks }}</h3>
-    <p>{{ post.body_text|censor|linebreaks }}<p>
-    {% for category in post.category.all %}
-        <p>Тег: {{ category }}</p>
-    {% endfor %}
-    <p>Дата публикации: {{ post.pub_date|date:"d.m.Y" }} {{ post.pub_date|time:"H:i" }}<p>
-    <p>Автор: {{ post.author }}</p>
-    <p>Рейтинг: {{ post.rating }}</p>
+    <br>
+        <h3>{{ post.headline|censor|linebreaks }}</h3>
+    <div class="d-flex justify-content-start align-items-center">
+        <p class="text-secondary">Опубликовано: {{ post.pub_date|date:"d.m.Y" }} {{ post.pub_date|time:"H:i" }}<p>
+        <p class="text-secondary"> | Автор: {{ post.author }}</p>
+    </div>
+    <p class="text-start">{{ post.body_text|censor|linebreaks }}<p>
+    <p class="text-secondary text-start">Теги:
+        {% for category in post.category.all %}
+            <button class="btn-sm border-0">
+                <a class="text-decoration-none" href="{% url 'category-list' pk=category.id %}">{{ category }}</a>
+            </button>
+        {% endfor %}
+    </p>
+    <p class="text-secondary">Рейтинг: {{ post.rating }}</p>
     <p>Комментарии:</p>
     {% for comment in post.comments.all %}
         <p>{{ comment.rating }} {{ comment.user }}</p>

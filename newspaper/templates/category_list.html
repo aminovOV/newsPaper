@@ -5,26 +5,25 @@
 {% load custom_tags %}
 
 {% block title %}
-Новости
+{{category.name}}
 {% endblock title %}
 
 {% block content %}
     <br>
-    <h1>Главные новости</h1>
+    <h1>{{category.name}}</h1>
     <hr>
     {% if perms.news.add_post %}
     <p><a class="page-link text-center" href="{% url 'news-create' %}">Добавить новость</a></p>
     <p><a class="page-link text-center" href="{% url 'article-create' %}">Добавить статью</a></p>
     <hr>
     {% endif %}
-    {% if posts %}
-        <div class="text-center">
-            {% for category in categories %}
-                    <a class="text-decoration-none" href="{% url 'category-list' pk=category.id %}">{{ category }}</a>
-            {% endfor %}
-        </div>
-        <hr>
-        {% for post in posts %}
+    {% if is_not_subscriber %}
+        <p class="text-center"><a href="{% url 'subscribe' pk=category.id %}" class="btn btn-secondary btn-sm">Подписаться</a></p>
+    {% else %}
+        <p class="text-center"><a href="{% url 'unsubscribe' pk=category.id %}" class="btn btn-secondary btn-sm">Отписаться</a></p>
+    {% endif %}
+    {% if category_news_list %}
+        {% for post in category_news_list %}
             <div class="card">
                 <div class="card-header">
                     <h6 class="card-title">
@@ -61,7 +60,7 @@
             </div>
         {% endfor %}
     {% else %}
-        <h3>Новостей нет</h3>
+        <h3>В этой категории новостей нет</h3>
     {% endif %}
 
     <div class="pagination-sm text-center">
@@ -83,4 +82,5 @@
         {% endif %}
     {% endif %}
     </div>
+
 {% endblock content %}

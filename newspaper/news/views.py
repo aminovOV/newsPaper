@@ -5,6 +5,13 @@ from django.views.generic import (
 from .models import Post
 from .filters import NewsFilter
 from .forms import PostForm
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_protect
+
+
+from .models import Category
 
 
 class NewsList(ListView):
@@ -13,6 +20,11 @@ class NewsList(ListView):
     template_name = 'news.html'
     context_object_name = 'posts'
     paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
 
 
 class NewsDetail(DetailView):
@@ -93,3 +105,49 @@ class ArticleDelete(DeleteView):
     model = Post
     template_name = 'article_delete.html'
     success_url = reverse_lazy('news-list')
+
+
+class CategoryListView(NewsList):
+    model = Post
+    template_name = 'category_list.html'
+    context_object_name = 'category_news_list'
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, id=self.kwargs['pk'])
+        queryset = Post.objects.filter(category=self.category).order_by('-pub_date')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_subscriber'] = self.request.user not in self.category.subscribers.all()
+        context['category'] = self.category
+        return context
+
+
+@login_required
+@csrf_protect
+def subscribe(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    category.subscribers.add(user)
+
+    message = 'Вы успешно подписались на рассылку новостей категории '
+    return render(request, 'subscribe.html', {'category': category, 'message': message})
+
+
+@login_required
+@csrf_protect
+def unsubscribe(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    category.subscribers.remove(user)
+
+    message = 'Вы успешно отписались от рассылки новостей категории '
+    return render(request, 'subscribe.html', {'category': category, 'message': message})
+
+
+@login_required
+def user_profile(request):
+    user = request.user
+    context = {'user': user}
+    return render(request, 'user_profile.html', context)
